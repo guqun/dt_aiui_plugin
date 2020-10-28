@@ -1,0 +1,22 @@
+PODS:
+  - dt_aiui_plugin (0.0.1):
+    - Flutter
+  - Flutter (1.0.0)
+
+DEPENDENCIES:
+  - dt_aiui_plugin (from `.symlinks/plugins/dt_aiui_plugin/ios`)
+  - Flutter (from `Flutter`)
+
+EXTERNAL SOURCES:
+  dt_aiui_plugin:
+    :path: ".symlinks/plugins/dt_aiui_plugin/ios"
+  Flutter:
+    :path: Flutter
+
+SPEC CHECKSUMS:
+  dt_aiui_plugin: 1183af1826d948cb4839a5cb0264f91be2edfd35
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.9.0
