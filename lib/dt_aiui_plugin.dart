@@ -8,8 +8,9 @@ class DtAiuiPlugin {
       const MethodChannel('dt_aiui_plugin');
   static const EventChannel eventChannel = EventChannel("dt_aiui_plugin_event");
 
-  static Future<bool> get initAIUIAgent async {
-    final bool isSuccess = await _channel.invokeMethod('initAIUIAgent');
+  static Future<bool> initAIUIAgent(String appId) async {
+    Map<String, String> map = {"appId": appId};
+    final bool isSuccess = await _channel.invokeMethod('initAIUIAgent', map);
     return isSuccess;
   }
 

@@ -1,14 +1,10 @@
 package com.zhejianglab.dt_aiui_plugin
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
-import android.content.pm.PackageManager
 import android.content.res.AssetManager
-import android.os.Build
 import android.text.TextUtils
 import androidx.annotation.NonNull
-import androidx.annotation.RequiresApi
+import com.google.gson.Gson
 import com.iflytek.aiui.*
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
@@ -16,11 +12,11 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry.*
 import org.json.JSONObject
 import java.io.IOException
 import java.nio.charset.Charset
 import java.util.logging.Logger
+
 
 /** DtAiuiPlugin */
 class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
@@ -55,7 +51,8 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
     if (call.method == "initAIUIAgent") {
-      result.success(initAIUIAgent())
+      val appId = call.argument<String>("appId")
+      result.success(appId?.let { initAIUIAgent(it) })
     } else if (call.method == "startVoiceNlp"){
       startVoiceNlp()
 //      result.success(null)
@@ -68,13 +65,13 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
     channel.setMethodCallHandler(null)
   }
 
-  private fun initAIUIAgent(): Boolean {
+  private fun initAIUIAgent(appId: String): Boolean {
 
     if (null == mAIUIAgent) {
       mLogger.info("create aiui agent")
 
       //创建AIUIAgent
-      mAIUIAgent = AIUIAgent.createAgent(mContext, getAIUIParams(), mAIUIListener)
+      mAIUIAgent = AIUIAgent.createAgent(mContext, getAIUIParams(appId), mAIUIListener)
     }
     if (null == mAIUIAgent) {
       val strErrorTip = "创建 AIUI Agent 失败！"
@@ -82,7 +79,7 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
     }
     return null != mAIUIAgent
   }
-  private fun getAIUIParams(): String? {
+  private fun getAIUIParams(appId: String): String? {
     var params = ""
     val assetManager: AssetManager? = mContext?.getResources()?.getAssets()
     if (assetManager == null){
@@ -94,6 +91,12 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
       ins.read(buffer)
       ins.close()
       params = String(buffer)
+//      val cfg = JSON.parseObject(params, CFG::class.java)
+//      cfg.login.appid = appId
+//      params = JSON.toJSONString(cfg)
+      val cfg = Gson().fromJson(params, CFG::class.java)
+      cfg.login.appid = appId
+      params = Gson().toJson(cfg)
     } catch (e: IOException) {
       e.printStackTrace()
     }
