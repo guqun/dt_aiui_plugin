@@ -150,10 +150,11 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
               }
 
 
-              this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, result.toString()));
               mLogger.info("on event: " + result.toString())
 
               if ("nlp" == sub && result.length() > 2) {
+                this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, result.toString()));
+
                 // 解析得到语义结果
                 var str = ""
                 //在线语义结果
