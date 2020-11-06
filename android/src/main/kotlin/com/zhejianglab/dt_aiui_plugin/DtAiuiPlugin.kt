@@ -145,7 +145,13 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
               val cntJson = JSONObject(event.data.getByteArray(cnt_id)?.let { String(it, Charset.forName("utf-8")) })
               val sub = params.optString("sub")
               val result = cntJson.optJSONObject("intent")
+              if (sub == null || result == null){
+                return
+              }
+
+
               this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, result.toString()));
+              mLogger.info("on event: " + result.toString())
 
               if ("nlp" == sub && result.length() > 2) {
                 // 解析得到语义结果
@@ -176,7 +182,7 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
 
           //错误事件
           mLogger.info("on event: " + event.eventType)
-          this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType));
+          this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, event.info));
 
         }
         AIUIConstant.EVENT_VAD -> {
@@ -185,12 +191,12 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
           if (AIUIConstant.VAD_BOS === event.arg1) {
             //找到语音前端点
             // TODO by niuqun
-            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType * 10 + AIUIConstant.VAD_BOS));
+            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, "VAD_BOS"));
 
           } else if (AIUIConstant.VAD_EOS === event.arg1) {
             //找到语音后端点
             // TODO by niuqun
-            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType * 10 + AIUIConstant.VAD_EOS));
+            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, "VAD_EOS"));
 
           } else {
             // TODO by niuqun
@@ -213,15 +219,15 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
           mAIUIState = event.arg1
           if (AIUIConstant.STATE_IDLE === mAIUIState) {
             // 闲置状态，AIUI未开启
-            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType * 10 + AIUIConstant.STATE_IDLE));
+            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, "STATE_IDLE"));
 
           } else if (AIUIConstant.STATE_READY === mAIUIState) {
             // AIUI已就绪，等待唤醒
-            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType * 10 + AIUIConstant.STATE_READY));
+            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, "STATE_READY"));
 
           } else if (AIUIConstant.STATE_WORKING === mAIUIState) {
             // AIUI工作中，可进行交互
-            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType * 10 + AIUIConstant.STATE_WORKING));
+            this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, "STATE_WORKING"));
 
           }
         }
