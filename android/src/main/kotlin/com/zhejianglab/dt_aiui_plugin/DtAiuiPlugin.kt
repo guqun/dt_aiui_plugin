@@ -25,7 +25,7 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
   /// when the Flutter Engine is detached from the Activity
   private lateinit var channel : MethodChannel
-  private val mLogger = Logger.getLogger(DtAiuiPlugin::channel.name)
+  private val mLogger = Logger.getLogger(DtAiuiPlugin::javaClass.name)
   private var mAIUIState: Int = AIUIConstant.STATE_IDLE
   private var mAIUIAgent: AIUIAgent? = null
   private var mContext: Context? = null
