@@ -29,7 +29,7 @@ class _MyAppState extends State<MyApp> {
     bool platformVersion;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      platformVersion = await DtAiuiPlugin.initAIUIAgent("AIUI_APP_ID"); // 填写自己的appid
+      platformVersion = await DtAiuiPlugin.initAIUIAgent("*****"); // 填写自己的appid
     } on PlatformException {
       platformVersion = false;
     }
@@ -68,14 +68,34 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Container(
-          child: GestureDetector(
-            onTap: (){
-              DtAiuiPlugin.startVoiceNlp;
-            },
-            child: Text('Running on: $_platformVersion\n -- $_eventContent'),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.all(20),
+                child: GestureDetector(
+                  onTap: (){
+                    DtAiuiPlugin.startVoiceNlp;
+                  },
+                  child: Text('start voice nlp'),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(20),
+                child: GestureDetector(
+                  onTap: (){
+                    DtAiuiPlugin.stopVoiceNlp;
+                  },
+                  child: Text('stop voice nlp'),
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.all(20),
+                child: Text(_eventContent),
+              )
+            ],
           ),
-        ),
+        )
       ),
     );
   }

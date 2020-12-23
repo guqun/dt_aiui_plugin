@@ -19,4 +19,9 @@ class DtAiuiPlugin {
     return;
   }
 
+  static Future<void> get stopVoiceNlp async {
+    _channel.invokeMethod('stopVoiceNlp');
+    return;
+  }
+
 }

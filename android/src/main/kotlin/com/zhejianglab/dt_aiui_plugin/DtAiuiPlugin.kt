@@ -56,6 +56,8 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
     } else if (call.method == "startVoiceNlp"){
       startVoiceNlp()
 //      result.success(null)
+    } else if (call.method == "stopVoiceNlp"){
+      stopVoiceNlp()
     } else {
       result.notImplemented()
     }
@@ -119,6 +121,13 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
     mAIUIAgent?.sendMessage(writeMsg)
   }
 
+
+  private fun stopVoiceNlp(){
+    val writeMsg = AIUIMessage(AIUIConstant.CMD_RESET_WAKEUP, 0, 0, "", null)
+    mAIUIAgent?.sendMessage(writeMsg)
+
+  }
+
   //AIUI事件监听器
   private val mAIUIListener: AIUIListener = object : AIUIListener {
     override fun onEvent(event: AIUIEvent) {
@@ -153,7 +162,7 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
               mLogger.info("on event: " + result.toString())
 
               if ("nlp" == sub && result.length() > 2) {
-                this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, result.toString()));
+                this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, result.toString(), true));
 
                 // 解析得到语义结果
                 var str = ""
@@ -232,13 +241,22 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
 
           }
         }
+        AIUIConstant.EVENT_SLEEP -> {
+          this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, event.info));
+        }
         else -> {
         }
       }
     }
   }
 
-  private fun getResultJson(code: Int, data: String = ""): String{
-    return "{\"code\": " + code + ", \"data\":\"" + data + "\"}"
+  private fun getResultJson(code: Int, data: String = "", isJson: Boolean = false): String{
+    if (isJson){
+      return "{\"code\": " + code + ", \"data\":" + data + "}"
+
+    } else {
+      return "{\"code\": " + code + ", \"data\":\"" + data + "\"}"
+    }
   }
+
 }
