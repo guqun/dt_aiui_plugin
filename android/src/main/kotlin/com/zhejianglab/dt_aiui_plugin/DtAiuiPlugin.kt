@@ -171,8 +171,6 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
                   val answer = result.optJSONObject("answer")
                   if (answer != null) {
                     str = answer.optString("text")
-//                    this@DtAiuiPlugin.mEventSink?.success(getResultJson(event.eventType, str));
-
                   }
                 } else {
                   str = "rc4，无法识别"

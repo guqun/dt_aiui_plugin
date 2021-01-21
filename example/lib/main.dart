@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
-import 'package:flutter/services.dart';
 import 'package:dt_aiui_plugin/dt_aiui_plugin.dart';
 
 void main() {
@@ -14,89 +12,93 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  bool _platformVersion = false;
-  String _eventContent = "nothing";
-  EventChannel _eventChannel;
+
+  Map<String, Object> _listenResult;
+
+  StreamSubscription<Map<String, Object>> _DtListener;
+
+  DtAiuiPlugin _DtPlugin = DtAiuiPlugin();
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
+
+    // 填写自己的appid
+    DtAiuiPlugin.initAIUIAgent("5f9628d0");
+
+    _DtListener =
+        _DtPlugin.onResultCallback().listen((Map<String, Object> result) {
+          setState(() {
+            _listenResult = result;
+            try {
+              print(result);
+            } catch (e) {
+              print(e);
+            }
+          });
+        });
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    bool platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await DtAiuiPlugin.initAIUIAgent("*****"); // 填写自己的appid
-    } on PlatformException {
-      platformVersion = false;
+  @override
+  void dispose() {
+    super.dispose();
+    if (null != _DtListener) {
+      _DtListener.cancel();
     }
-  _eventChannel = DtAiuiPlugin.eventChannel;
-    _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
   }
 
-  void _onEvent(Object object){
-    setState(() {
-      if (object is String) {
-        _eventContent = object;
-      }
-    });
+  /// 启动定位
+  void _startLocation() {
+    if (null != _DtPlugin) {
+      _DtPlugin.startVoiceNlp();
+    }
   }
 
-  void _onError(Object object){
-    setState(() {
-      if (object is String) {
-        _eventContent = object;
-      }
-    });
+  /// 停止定位
+  void _stopLocation() {
+    if (null != _DtPlugin) {
+      _DtPlugin.stopVoiceNlp();
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.all(20),
-                child: GestureDetector(
-                  onTap: (){
-                    DtAiuiPlugin.startVoiceNlp;
-                  },
-                  child: Text('start voice nlp'),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: GestureDetector(
-                  onTap: (){
-                    DtAiuiPlugin.stopVoiceNlp;
-                  },
-                  child: Text('stop voice nlp'),
-                ),
-              ),
-              Container(
-                margin: EdgeInsets.all(20),
-                child: Text(_eventContent),
-              )
-            ],
+          appBar: AppBar(
+            title: const Text('Plugin example app'),
           ),
-        )
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(20),
+                  child: GestureDetector(
+                    onTap: (){
+                      _startLocation();
+                    },
+                    child: Text('start voice nlp'),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(20),
+                  child: GestureDetector(
+                    onTap: (){
+                      _stopLocation();
+                    },
+                    child: Text('stop voice nlp'),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(20),
+                  child: Text(_listenResult == null ? "看我七十二变" : _listenResult['msg']),
+                )
+              ],
+            ),
+          )
       ),
     );
   }
+
 }

@@ -13,11 +13,22 @@ A new flutter plugin project.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
+
+#  s.vendored_frameworks = "frameworks/iflyAIUI.framework"
+  s.vendored_frameworks = "**/iflyAIUI.framework"
+
+  s.frameworks = "CoreLocation","CoreTelephony","AVFoundation","AddressBook","AudioToolbox","Contacts","SystemConfiguration","QuartzCore","UIKit","Foundation","CoreGraphics"
+
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'
-  s.platform = :ios, '8.0'
+  s.library = "z"
+  
+  s.libraries = "c++", "icucore", "z"
+
+  s.resources = "resource/*"
+
+  s.platform = :ios, '9.0'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
-  s.swift_version = '5.0'
 end
