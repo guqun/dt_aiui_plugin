@@ -271,7 +271,7 @@
     
     NSString *returnStr = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 
-    [[DtAiUiFlutterStreamManager sharedInstance] streamHandler].eventSink(@{@"msg":returnStr});
+    [[DtAiUiFlutterStreamManager sharedInstance] streamHandler].eventSink(returnStr);
 
 }
 

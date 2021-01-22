@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/services.dart';
 import 'package:dt_aiui_plugin/dt_aiui_plugin.dart';
 
 void main() {
@@ -12,55 +14,52 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-  Map<String, Object> _listenResult;
-
-  StreamSubscription<Map<String, Object>> _DtListener;
-
-  DtAiuiPlugin _DtPlugin = DtAiuiPlugin();
+  bool _platformVersion = false;
+  String _eventContent = "nothing";
+  EventChannel _eventChannel;
 
   @override
   void initState() {
     super.initState();
-
-    // 填写自己的appid
-    DtAiuiPlugin.initAIUIAgent("5f9628d0");
-
-    _DtListener =
-        _DtPlugin.onResultCallback().listen((Map<String, Object> result) {
-          setState(() {
-            _listenResult = result;
-            try {
-              print(result);
-            } catch (e) {
-              print(e);
-            }
-          });
-        });
+    initPlatformState();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    if (null != _DtListener) {
-      _DtListener.cancel();
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initPlatformState() async {
+    bool platformVersion;
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    _eventChannel = DtAiuiPlugin.eventChannel;
+
+    await _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
+
+    try {
+      platformVersion = await DtAiuiPlugin.initAIUIAgent("*****"); // 填写自己的appid
+    } on PlatformException {
+      platformVersion = false;
     }
+
+    if (!mounted) return;
+
+    setState(() {
+      _platformVersion = platformVersion;
+    });
   }
 
-  /// 启动定位
-  void _startLocation() {
-    if (null != _DtPlugin) {
-      _DtPlugin.startVoiceNlp();
-    }
+  void _onEvent(Object object){
+    setState(() {
+      if (object is String) {
+        _eventContent = object;
+      }
+    });
   }
 
-  /// 停止定位
-  void _stopLocation() {
-    if (null != _DtPlugin) {
-      _DtPlugin.stopVoiceNlp();
-    }
+  void _onError(Object object){
+    setState(() {
+      if (object is String) {
+        _eventContent = object;
+      }
+    });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +75,7 @@ class _MyAppState extends State<MyApp> {
                   margin: EdgeInsets.all(20),
                   child: GestureDetector(
                     onTap: (){
-                      _startLocation();
+                      DtAiuiPlugin.startVoiceNlp;
                     },
                     child: Text('start voice nlp'),
                   ),
@@ -85,14 +84,14 @@ class _MyAppState extends State<MyApp> {
                   margin: EdgeInsets.all(20),
                   child: GestureDetector(
                     onTap: (){
-                      _stopLocation();
+                      DtAiuiPlugin.stopVoiceNlp;
                     },
                     child: Text('stop voice nlp'),
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.all(20),
-                  child: Text(_listenResult == null ? "看我七十二变" : _listenResult['msg']),
+                  child: Text(_eventContent),
                 )
               ],
             ),
@@ -100,5 +99,4 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
-
 }
