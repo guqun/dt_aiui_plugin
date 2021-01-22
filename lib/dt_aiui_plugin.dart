@@ -39,6 +39,7 @@ class DtAiuiPlugin {
       _resultMap = _stream.receiveBroadcastStream().map<Map<String, Object>>(
               (element) => element.cast<String, Object>());
     }
+    ///['msg':'json内容'];
     return _resultMap;
   }
 
