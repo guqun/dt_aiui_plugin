@@ -10,7 +10,7 @@ class DtAiuiPlugin {
 
   static Future<bool> initAIUIAgent(String appId) async {
     Map<String, String> map = {"appId": appId};
-    final bool isSuccess = await _channel.invokeMethod('initAIUIAgent', map);
+    bool isSuccess = await _channel.invokeMethod('initAIUIAgent', map);
     return isSuccess;
   }
 

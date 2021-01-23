@@ -30,10 +30,10 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     _eventChannel = DtAiuiPlugin.eventChannel;
 
-    await _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
+    _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
 
     try {
-      platformVersion = await DtAiuiPlugin.initAIUIAgent("*****"); // 填写自己的appid
+      platformVersion = await DtAiuiPlugin.initAIUIAgent("5f9628d0"); // 填写自己的appid
     } on PlatformException {
       platformVersion = false;
     }

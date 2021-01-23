@@ -55,9 +55,10 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
       result.success(appId?.let { initAIUIAgent(it) })
     } else if (call.method == "startVoiceNlp"){
       startVoiceNlp()
-//      result.success(null)
+      result.success(true)
     } else if (call.method == "stopVoiceNlp"){
       stopVoiceNlp()
+      result.success(true)
     } else {
       result.notImplemented()
     }
