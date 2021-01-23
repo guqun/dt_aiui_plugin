@@ -173,12 +173,12 @@
                     [self getResultJsonWithCode:EVENT_VAD data:@"VAD_EOS"];
                 } break;
                     
-                case VAD_VOL:
-                {
-                        //音量事件
-                    NSLog(@"vol: %d", event.arg2);
-                    [self getResultJsonWithCode:EVENT_VAD data:@"VAD_VOL"];
-                } break;
+//                case VAD_VOL:
+//                {
+//                        //音量事件
+//                    NSLog(@"vol: %d", event.arg2);
+//                    [self getResultJsonWithCode:EVENT_VAD data:@"VAD_VOL"];
+//                } break;
             }
         } break;
             
@@ -232,10 +232,20 @@
         }
         
         NSData *rltData = [event.data objectForKey:cnt_id];
+        
         if(rltData){
             NSString *rltStr = [[NSString alloc]initWithData:rltData encoding:NSUTF8StringEncoding];
             
-            [self getResultJsonWithCode:1 data:rltStr];
+            
+            NSDictionary *dic = [self dictionaryWithJsonString:[rltStr stringByReplacingOccurrencesOfString:@"\0" withString:@""]];
+            
+            if (dic != NULL) {
+                if ([[dic allKeys] containsObject:@"intent"]) {
+                    
+                    [self getResultJsonWithCode:1 data:[self gs_jsonStringCompactFormatForDictionary:[dic objectForKey:@"intent"]]];
+
+                }
+            }
             
             NSLog(@"nlp result: %@", rltStr);
         }
@@ -274,6 +284,47 @@
     [[DtAiUiFlutterStreamManager sharedInstance] streamHandler].eventSink(returnStr);
 
 }
+
+
+- (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString
+{
+    if (jsonString == nil) {
+        return nil;
+    }
+
+    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *err;
+    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                        options:NSJSONReadingMutableContainers
+                                                          error:&err];
+    if(err)
+    {
+        NSLog(@"json解析失败：%@",err);
+        return nil;
+    }
+    return dic;
+}
+
+- (NSString *)gs_jsonStringCompactFormatForDictionary:(NSDictionary *)dicJson {
+
+    
+
+    if (![dicJson isKindOfClass:[NSDictionary class]] || ![NSJSONSerialization isValidJSONObject:dicJson]) {
+
+        return nil;
+
+    }
+
+    
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dicJson options:0 error:nil];
+
+    NSString *strJson = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+    return strJson;
+
+}
+
 
 
 @end
