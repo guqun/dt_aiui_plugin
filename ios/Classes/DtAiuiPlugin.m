@@ -63,6 +63,12 @@
         //创建AIUIAgent
         _aiuiAgent = [IFlyAIUIAgent createAgent:cfg withListener:self];
         
+        if (_aiuiAgent == NULL) {
+            result(@NO);
+        }else{
+            result(@YES);
+        }
+
     }else if ([@"startVoiceNlp" isEqualToString:call.method]){
 
         //发送唤醒消息
@@ -74,10 +80,17 @@
         IFlyAIUIMessage *msg = [[IFlyAIUIMessage alloc] init];
         msg.msgType = CMD_START_RECORD;
         [_aiuiAgent sendMessage:msg];
+        result(@YES);
 
         
     }else if ([@"stopVoiceNlp" isEqualToString:call.method]){
 
+        //发送开始录音消息
+        IFlyAIUIMessage *msg = [[IFlyAIUIMessage alloc] init];
+        msg.msgType = CMD_RESET_WAKEUP;
+        [_aiuiAgent sendMessage:msg];
+
+        result(@YES);
 
     }else {
         result(FlutterMethodNotImplemented);
@@ -249,22 +262,8 @@
             
             NSLog(@"nlp result: %@", rltStr);
         }
-    } else if([sub isEqualToString:@"tts"]){
-        NSLog(@"receive tts event");
+    } else{
         
-        NSString *cnt_id = [content objectForKey:@"cnt_id"];
-        if(cnt_id){
-            //合成音频数据
-            NSData *audioData = [event.data objectForKey:cnt_id];
-            
-            //当前音频块状态：0（开始）,1（中间）,2（结束）,3（一块）
-            int dts = [(NSNumber *)[content objectForKey:@"dts"] intValue];
-            
-            //合成进度
-            int text_per = [(NSNumber *)[content objectForKey:@"text_percent"] intValue];
-            
-            NSLog(@"dataLen=%lu, dts=%d, text_percent=%d", (unsigned long)[audioData length], dts, text_per);
-        }
     }
 }
 
