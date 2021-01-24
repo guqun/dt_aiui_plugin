@@ -255,7 +255,7 @@
             if (dic != NULL) {
                 if ([[dic allKeys] containsObject:@"intent"]) {
                     
-                    [self getResultJsonWithCode:1 data:[self gs_jsonStringCompactFormatForDictionary:[dic objectForKey:@"intent"]]];
+                    [self getResultJsonWithCode:1 data:[dic objectForKey:@"intent"]];
 
                 }
             }
