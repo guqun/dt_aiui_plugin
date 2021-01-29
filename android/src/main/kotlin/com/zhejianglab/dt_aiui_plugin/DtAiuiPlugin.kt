@@ -124,8 +124,10 @@ class DtAiuiPlugin: FlutterPlugin, MethodCallHandler{
 
 
   private fun stopVoiceNlp(){
-    val writeMsg = AIUIMessage(AIUIConstant.CMD_RESET_WAKEUP, 0, 0, "", null)
-    mAIUIAgent?.sendMessage(writeMsg)
+
+    val params = "sample_rate=16000,data_type=audio"
+    val stopWriteMsg = AIUIMessage(AIUIConstant.CMD_STOP_RECORD, 0, 0, params, null)
+    mAIUIAgent?.sendMessage(stopWriteMsg)
 
   }
 
