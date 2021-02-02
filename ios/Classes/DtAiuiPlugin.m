@@ -78,6 +78,7 @@
             
         //发送开始录音消息
         IFlyAIUIMessage *msg = [[IFlyAIUIMessage alloc] init];
+        msg.params = @"sample_rate=16000,data_type=audio";
         msg.msgType = CMD_START_RECORD;
         [_aiuiAgent sendMessage:msg];
         result(@YES);
@@ -87,7 +88,8 @@
 
         //发送开始录音消息
         IFlyAIUIMessage *msg = [[IFlyAIUIMessage alloc] init];
-        msg.msgType = CMD_RESET_WAKEUP;
+        msg.params = @"sample_rate=16000,data_type=audio";
+        msg.msgType = CMD_STOP_RECORD;
         [_aiuiAgent sendMessage:msg];
 
         result(@YES);
@@ -327,3 +329,4 @@
 
 
 @end
+
