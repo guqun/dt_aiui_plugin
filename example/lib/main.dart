@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
     _eventChannel.receiveBroadcastStream().listen(_onEvent, onError: _onError);
 
     try {
-      platformVersion = await DtAiuiPlugin.initAIUIAgent("5f9628d0"); // 填写自己的appid
+      platformVersion = await DtAiuiPlugin.initAIUIAgent("5face485"); // 填写自己的appid
     } on PlatformException {
       platformVersion = false;
     }
