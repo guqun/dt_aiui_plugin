@@ -1,11 +1,11 @@
 name: dt_aiui_plugin
 description: A new flutter plugin project.
-version: 0.0.18
+version: 1.0.0
 author: niuqun <guqung6@gmail.com>
 homepage: https://github.com/guqun/gen_deviceid_plugin
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.20.0 "
 
 dependencies:
